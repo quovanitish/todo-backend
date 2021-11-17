@@ -1,13 +1,11 @@
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
-const uri = process.env.DB_URI;
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-client.connect();
-const db = client.db("todo_app");
-
-module.exports = db;
+mongoose
+  .connect(process.env.DB_URI)
+  .then(() => {
+    console.log("Successfully connected");
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });

@@ -1,17 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../../db/db");
+const auth = require("../../middleware/auth/auth");
 const User = require("../../db/models/user/user");
 
 router.post("/users", async (req, res) => {
+  const user = new User(req.body);
   try {
-    const userCollection = db.collection("users");
-    const user = new User(req.body);
-    await user.hashPassword();
+    await user.save();
     const token = await user.generateAuthToken();
-    const result = await userCollection.insertOne(user);
-
-    res.status(201).send({ result, token });
+    res.status(201).send({ user, token });
   } catch (err) {
     res.status(400).send(err);
   }
@@ -24,9 +21,14 @@ router.post("/users/login", async (req, res) => {
       req.body.password
     );
 
-    res.status(200).send({ user });
+    const token = await user.generateAuthToken();
+    res.send({ user, token });
   } catch (err) {
-    res.status(401).send(err);
+    res.status(400).send(err);
   }
+});
+
+router.get("/users/me", auth, async (req, res) => {
+  res.send(req.user);
 });
 module.exports = router;
