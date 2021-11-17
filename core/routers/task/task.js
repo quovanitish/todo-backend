@@ -40,4 +40,52 @@ router.get("/tasks/:id", auth, async (req, res) => {
   }
 });
 
+router.patch("/tasks/:id/title", auth, async (req, res) => {
+  const taskId = req.params.id;
+  try {
+    const task = await Task.findOne({ _id: taskId, owner: req.user._id });
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    task.title = req.body.title;
+    await task.save();
+    res.send(task);
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
+router.patch("/tasks/:id/desc", auth, async (req, res) => {
+  const taskId = req.params.id;
+  try {
+    const task = await Task.findOne({ _id: taskId, owner: req.user._id });
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    task.description = req.body.description;
+    await task.save();
+    res.send(task);
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
+router.patch("/tasks/:id/status", auth, async (req, res) => {
+  const taskId = req.params.id;
+  try {
+    const task = await Task.findOne({ _id: taskId, owner: req.user._id });
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    task.status = req.body.status;
+    await task.save();
+    res.send(task);
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;
