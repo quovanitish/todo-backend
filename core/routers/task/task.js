@@ -88,4 +88,21 @@ router.patch("/tasks/:id/status", auth, async (req, res) => {
   }
 });
 
+router.delete("/tasks/:id", auth, async (req, res) => {
+  const taskId = req.params.id;
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: taskId,
+      owner: req.user._id,
+    });
+    if (!task) {
+      res.status(404).send();
+    }
+
+    res.send(task);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
 module.exports = router;
